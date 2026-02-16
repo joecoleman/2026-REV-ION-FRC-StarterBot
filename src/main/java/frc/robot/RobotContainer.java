@@ -82,7 +82,10 @@ public class RobotContainer {
 
     // Start Button -> Zero swerve heading
     m_driverController.start().onTrue(m_robotDrive.zeroHeadingCommand());
-
+    // Right Bumper -> Run flywheel while held
+    m_driverController
+      .a()
+      .whileTrue(m_shooter.runFlywheelCommand());
     // Right Trigger -> Run fuel intake in reverse
     m_driverController
       .rightTrigger(OIConstants.kTriggerButtonThreshold)

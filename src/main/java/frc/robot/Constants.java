@@ -29,8 +29,8 @@ public final class Constants {
     }
 
     public static final class ConveyorSetpoints {
-      public static final double kIntake = 0.7;
-      public static final double kExtake = -0.7;
+      public static final double kIntake = 0.95;
+      public static final double kExtake = -0.95;
     }
   }
 
@@ -44,7 +44,7 @@ public final class Constants {
     }
 
     public static final class FlywheelSetpoints {
-      public static final double kShootRpm = 5000;
+      public static final double kShootRpm = 4000;
       public static final double kVelocityTolerance = 100;
     }
   }

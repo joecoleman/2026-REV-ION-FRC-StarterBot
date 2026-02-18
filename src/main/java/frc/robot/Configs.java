@@ -7,7 +7,6 @@ package frc.robot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import frc.robot.Constants.ModuleConstants;
@@ -82,8 +81,8 @@ public final class Configs {
   }
 
   public static final class IntakeSubsystem {
-    public static final SparkFlexConfig intakeConfig = new SparkFlexConfig();
-    public static final SparkFlexConfig conveyorConfig = new SparkFlexConfig();
+    public static final SparkMaxConfig intakeConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig conveyorConfig = new SparkMaxConfig();
 
     static {
       // Configure basic settings of the intake motor
@@ -103,9 +102,9 @@ public final class Configs {
   }
 
   public static final class ShooterSubsystem {
-    public static final SparkFlexConfig flywheelConfig = new SparkFlexConfig();
-    public static final SparkFlexConfig flywheelFollowerConfig = new SparkFlexConfig();
-    public static final SparkFlexConfig feederConfig = new SparkFlexConfig();
+    public static final SparkMaxConfig flywheelConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig flywheelFollowerConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig feederConfig = new SparkMaxConfig();
 
     static {
       // Configure basic setting of the flywheel motors

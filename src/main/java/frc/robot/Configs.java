@@ -109,7 +109,7 @@ public final class Configs {
     static {
       // Configure basic setting of the flywheel motors
       flywheelConfig
-        .inverted(true)
+        .inverted(false)
         .idleMode(IdleMode.kCoast)
         .closedLoopRampRate(1.0)
         .openLoopRampRate(1.0)

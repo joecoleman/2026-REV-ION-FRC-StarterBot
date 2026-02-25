@@ -15,7 +15,6 @@ import frc.robot.commands.Autos;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-
 import frc.robot.subsystems.ShooterSubsystem;
 
 
@@ -86,9 +85,9 @@ public class RobotContainer {
         new RunCommand(
             () ->
                 m_robotDrive.drive(
-                    -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband) * 0.5,
-                    -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband) * 0.5,
-                    -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband) * 0.5,
+                    -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband) * 0.25,
+                    -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband) * 0.25,
+                    -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband) * 0.25,
                     true),
             m_robotDrive)
         .withName("Half Speed Drive"));

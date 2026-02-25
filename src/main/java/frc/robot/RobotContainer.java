@@ -15,6 +15,7 @@ import frc.robot.commands.Autos;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+
 import frc.robot.subsystems.ShooterSubsystem;
 
 
@@ -79,6 +80,18 @@ public class RobotContainer {
   private void configureBindings() {
     // Left Stick Button -> Set swerve to X
     m_driverController.leftStick().whileTrue(m_robotDrive.setXCommand());
+
+    // Left Bumper -> Toggle half-speed drive (reduces all joystick inputs by 1/2)
+    m_driverController.leftBumper().toggleOnTrue(
+        new RunCommand(
+            () ->
+                m_robotDrive.drive(
+                    -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband) * 0.5,
+                    -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband) * 0.5,
+                    -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband) * 0.5,
+                    true),
+            m_robotDrive)
+        .withName("Half Speed Drive"));
 
     // Start Button -> Zero swerve heading
     m_driverController.start().onTrue(m_robotDrive.zeroHeadingCommand());

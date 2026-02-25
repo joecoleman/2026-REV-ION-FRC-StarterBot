@@ -21,14 +21,8 @@ public final class Constants {
 
   public static final class IntakeSubsystemConstants {
     public static final int kIntakeMotorCanId = 2;    // SPARK Max CAN ID
-    public static final int kConveyorMotorCanId = 4;  // SPARK Max CAN ID
 
     public static final class IntakeSetpoints {
-      public static final double kIntake = 0.6;
-      public static final double kExtake = -0.6;
-    }
-
-    public static final class ConveyorSetpoints {
       public static final double kIntake = 0.95;
       public static final double kExtake = -0.95;
     }

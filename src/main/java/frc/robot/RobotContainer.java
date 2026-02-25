@@ -112,7 +112,8 @@ public class RobotContainer {
     m_driverController
       .y().toggleOnTrue(m_shooter.runShooterCommand());
     m_driverController
-      .x().whileTrue(m_shooter.runFeederCommand());
+      .x()
+      .toggleOnTrue(m_shooter.runFeederCommand().withName("Feeder - Toggle"));
   }
 
   /**

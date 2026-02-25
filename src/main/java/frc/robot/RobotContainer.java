@@ -95,7 +95,7 @@ public class RobotContainer {
 
     // Start Button -> Zero swerve heading
     m_driverController.start().onTrue(m_robotDrive.zeroHeadingCommand());
-    // Right Bumper -> Run flywheel while held
+    // A button -> Run flywheel while held
     m_driverController
       .a()
       .whileTrue(m_shooter.runFlywheelCommand());
@@ -109,8 +109,11 @@ public class RobotContainer {
       .leftTrigger(OIConstants.kTriggerButtonThreshold)
       .whileTrue(m_intake.runExtakeCommand());
 
-    // Y Button -> Run and run the shooter flywheel and feeder
-    m_driverController.y().toggleOnTrue(m_shooter.runShooterCommand());
+    // Y Button -> Run and run the shooter flywheel 
+    m_driverController
+      .y().toggleOnTrue(m_shooter.runShooterCommand());
+    m_driverController
+      .x().whileTrue(m_shooter.runFeederCommand());
   }
 
   /**

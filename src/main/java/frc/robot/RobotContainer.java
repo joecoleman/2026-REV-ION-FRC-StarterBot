@@ -16,6 +16,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
 
 
 /**
@@ -29,6 +30,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  private final FeederSubsystem m_feeder = new FeederSubsystem();
 
   // The driver's controller
   private final CommandXboxController m_driverController =
@@ -57,13 +59,14 @@ public class RobotContainer {
 
     SmartDashboard.putData(m_intake);
     SmartDashboard.putData(m_shooter);
+  SmartDashboard.putData(m_feeder);
 
     SmartDashboard.putNumber("Bat Voltage", RobotController.getBatteryVoltage());
 
     SmartDashboard.putData("Intake", m_intake.runIntakeCommand().withName("Intake - Intaking"));
     SmartDashboard.putData("Extake", m_intake.runExtakeCommand().withName("Intake - Extaking"));
 
-    SmartDashboard.putData("Feeder", m_shooter.runFeederCommand().withName("Shooter - Feeding and Shooting"));
+  SmartDashboard.putData("Feeder", m_feeder.runFeederCommand().withName("Feeder - Feeding"));
     SmartDashboard.putData("Flywheel", m_shooter.runFlywheelCommand().withName("Shooter - Spinning up Flywheel"));
   }
 
@@ -113,7 +116,7 @@ public class RobotContainer {
       .y().toggleOnTrue(m_shooter.runShooterCommand());
     m_driverController
       .x()
-      .toggleOnTrue(m_shooter.runFeederCommand().withName("Feeder - Toggle"));
+      .toggleOnTrue(m_feeder.runFeederCommand().withName("Feeder - Toggle"));
   }
 
   /**

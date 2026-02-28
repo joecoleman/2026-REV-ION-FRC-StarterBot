@@ -38,8 +38,7 @@ public final class Constants {
     }
 
     public static final class FlywheelSetpoints {
-      public static final double kShootRpm = 5000;
-      public static final double kVelocityTolerance = 100;
+      public static final double kShootPower = 1.0; // run motor at full power
     }
   }
 

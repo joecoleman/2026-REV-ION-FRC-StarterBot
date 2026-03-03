@@ -117,7 +117,7 @@ public class RobotContainer {
     // X Button -> Run the feeder
     m_driverController
       .x()
-      .toggleOnTrue(m_feeder.runFeederCommand().withName("Feeder - Toggle"));
+      .whileTrue(m_feeder.runFeederCommand().withName("Feeder - Feeding"));
   }
 
   /**

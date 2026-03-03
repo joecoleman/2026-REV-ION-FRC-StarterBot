@@ -34,11 +34,11 @@ public final class Constants {
     public static final int kFlywheelFollowerMotorCanId = 7;  // SPARK Max CAN ID (Left)
 
     public static final class FeederSetpoints {
-      public static final double kFeed = 0.95;
+      public static final double kFeed = 0.10;
     }
 
     public static final class FlywheelSetpoints {
-      public static final double kShootPower = 1.0; // run motor at full power
+      public static final double kShootPower = .90; // run motor at full power
     }
   }
 

@@ -4,14 +4,14 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
+
+
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Configs;
+
 import frc.robot.Constants.ShooterSubsystemConstants.FeederSetpoints;
 import frc.robot.Constants.ShooterSubsystemConstants;
 
@@ -23,14 +23,8 @@ public class FeederSubsystem extends SubsystemBase {
   private SparkMax feederMotor =
       new SparkMax(ShooterSubsystemConstants.kFeederMotorCanId, MotorType.kBrushless);
 
-  public FeederSubsystem() {
-    feederMotor.configure(
-        Configs.ShooterSubsystem.feederConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
 
-    System.out.println("---> FeederSubsystem initialized");
-  }
+  
 
   /** Set the feeder motor power in the range [-1, 1]. */
   public void setFeederPower(double power) {

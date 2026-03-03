@@ -34,11 +34,12 @@ public final class Constants {
     public static final int kFlywheelFollowerMotorCanId = 7;  // SPARK Max CAN ID (Left)
 
     public static final class FeederSetpoints {
-      public static final double kFeed = 0.10;
+      public static final double kFeed = 0.95;
     }
 
-    public static final class FlywheelSetpoints {
-      public static final double kShootPower = .90; // run motor at full power
+     public static final class FlywheelSetpoints {
+      public static final double kShootRpm = 5000;
+      public static final double kVelocityTolerance = 100;
     }
   }
 
@@ -83,7 +84,7 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
-   
+    public static final double kVortexKv = 565;   // rpm/V
   }
 
   public static final class ModuleConstants {

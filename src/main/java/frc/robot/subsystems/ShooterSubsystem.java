@@ -41,7 +41,7 @@ public class ShooterSubsystem extends SubsystemBase {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
-    System.out.println("---> ShooterSubsystem initialized (open-loop flywheel)");
+    
   }
 
   /** Set the flywheel power (open-loop). */

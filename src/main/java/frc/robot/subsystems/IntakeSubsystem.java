@@ -8,7 +8,6 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -42,8 +41,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   
 
-    System.out.println("---> IntakeSubsystem initialized");
-  }
+      }
 
   /** Set the intake motor power in the range of [-1, 1]. */
   private void setIntakePower(double power) {
@@ -54,7 +52,7 @@ public class IntakeSubsystem extends SubsystemBase {
   
 
   /**
-   * Command to run the intake and conveyor motors. When the command is interrupted, e.g. the button is released,
+   * Command to run the intake. When the command is interrupted, e.g. the button is released,
    * the motors will stop.
    */
   public Command runIntakeCommand() {
@@ -68,7 +66,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /**
-   * Command to reverse the intake motor and coveyor motors. When the command is interrupted, e.g. the button is
+   * Command to reverse the intake motor.When the command is interrupted, e.g. the button is
    * released, the motors will stop.
    */
   public Command runExtakeCommand() {

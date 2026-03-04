@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Autos;
@@ -111,9 +112,8 @@ public class RobotContainer {
       .leftTrigger(OIConstants.kTriggerButtonThreshold)
       .whileTrue(m_intake.runExtakeCommand());
 
-    // Y Button -> Run the shooter flywheel 
-    m_driverController
-      .y().toggleOnTrue(m_shooter.runShooterCommand());
+    // Y Button -> Toggle shooter on/off
+    m_driverController.y().onTrue(new InstantCommand(m_shooter::toggleShooter, m_shooter));
     // X Button -> Run the feeder
     m_driverController
       .x()

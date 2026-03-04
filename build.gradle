@@ -73,6 +73,16 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // CTRE Phoenix (Victor SPX) - Phoenix Java API
+    // If your network/build environment cannot reach CTRE's Maven, place the Phoenix JARs into vendordeps/ and
+    // add them as file dependencies instead.
+    implementation 'com.ctre.phoenix:api-java:5.22.3'
+}
+
+// CTRE Maven repository (needed to resolve the Phoenix Java artifacts)
+repositories {
+    maven { url 'https://maven.ctre-electronics.com/repository/maven-public/' }
+    mavenCentral()
 }
 
 test {

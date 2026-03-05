@@ -77,12 +77,13 @@ dependencies {
     // If your network/build environment cannot reach CTRE's Maven, place the Phoenix JARs into vendordeps/ and
     // add them as file dependencies instead.
     implementation 'com.ctre.phoenix:api-java:5.22.3'
-    // PathPlanner library
-    implementation 'com.pathplanner.lib:PathPlannerLib:2024.2.2'
-    simulationDebug 'com.pathplanner.lib:PathPlannerLib:2024.2.2'
-    nativeDebug 'com.pathplanner.lib:PathPlannerLib:2024.2.2'
-    nativeRelease 'com.pathplanner.lib:PathPlannerLib:2024.2.2'
-    simulationRelease 'com.pathplanner.lib:PathPlannerLib:2024.2.2'
+    // PathPlanner library - use local vendordeps copy to avoid unresolved remote dependency
+    implementation files('vendordeps/pathplanner/PathPlannerLib-2024.2.2.jar')
+    simulationDebug files('vendordeps/pathplanner/PathPlannerLib-2024.2.2.jar')
+    nativeDebug files('vendordeps/pathplanner/PathPlannerLib-2024.2.2.jar')
+    nativeRelease files('vendordeps/pathplanner/PathPlannerLib-2024.2.2.jar')
+    simulationRelease files('vendordeps/pathplanner/PathPlannerLib-2024.2.2.jar')
+    // Manually added PathPlannerLib JAR (kept for backward compatibility)
 }
 
 // CTRE Maven repository (needed to resolve the Phoenix Java artifacts)

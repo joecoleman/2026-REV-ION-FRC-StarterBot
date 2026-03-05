@@ -36,7 +36,7 @@ public class ShooterSubsystem extends SubsystemBase {
       flywheelMotor.setNeutralMode(NeutralMode.Coast);
 
       flywheelFollowerMotor.configFactoryDefault();
-      flywheelFollowerMotor.setInverted(false);
+      flywheelFollowerMotor.setInverted(true);
       flywheelFollowerMotor.setNeutralMode(NeutralMode.Coast);
       flywheelFollowerMotor.follow(flywheelMotor);
     } catch (Throwable t) {

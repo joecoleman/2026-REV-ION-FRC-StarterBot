@@ -96,7 +96,7 @@ public class RobotContainer {
         .withName("Half Speed Drive"));
 
     // Start Button -> Zero swerve heading
-    m_driverController.start().onTrue(m_robotDrive.zeroHeadingCommand());
+    m_driverController.rightBumper().onTrue(m_robotDrive.zeroHeadingCommand());
     // A button -> Run flywheel while held
     m_driverController
       .a()

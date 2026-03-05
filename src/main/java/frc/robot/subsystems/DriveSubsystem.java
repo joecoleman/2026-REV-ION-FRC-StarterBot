@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -11,8 +12,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
@@ -40,13 +39,13 @@ private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
     DriveConstants.kBackRightChassisAngularOffset);
 
   // The gyro sensor
-  private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
+  private final Pigeon2 m_gyro = new Pigeon2(0); // Change 0 to your CAN ID
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry =
       new SwerveDriveOdometry(
-          DriveConstants.kDriveKinematics,
-          Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kY)),
+            DriveConstants.kDriveKinematics,
+            Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()),
           new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -61,7 +60,7 @@ private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
   public void periodic() {
     // Update the odometry in the periodic block
     m_odometry.update(
-        Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kY)),
+  Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()),
         new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -86,7 +85,7 @@ private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
    */
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(
-        Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kY)),
+  Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()),
         new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -110,15 +109,15 @@ private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
 
-    var swerveModuleStates =
-        DriveConstants.kDriveKinematics.toSwerveModuleStates(
-            fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                    xSpeedDelivered,
-                    ySpeedDelivered,
-                    rotDelivered,
-                    Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kY)))
-                : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+  var swerveModuleStates =
+    DriveConstants.kDriveKinematics.toSwerveModuleStates(
+      fieldRelative
+        ? ChassisSpeeds.fromFieldRelativeSpeeds(
+          xSpeedDelivered,
+          ySpeedDelivered,
+          rotDelivered,
+                    Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()))
+        : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
@@ -162,7 +161,7 @@ private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
 
   /** Zeroes the heading of the robot. */
   public Command zeroHeadingCommand() {
-    return this.runOnce(() -> m_gyro.reset());
+  return this.runOnce(() -> m_gyro.setYaw(0));
   }
 
   /**
@@ -171,7 +170,7 @@ private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kY)).getDegrees();
+  return Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble()).getDegrees();
   }
 
   /**
@@ -180,6 +179,6 @@ private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
-    return m_gyro.getRate(IMUAxis.kY) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  return m_gyro.getAngularVelocityZWorld().getValueAsDouble() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 }

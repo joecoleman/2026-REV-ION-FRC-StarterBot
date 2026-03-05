@@ -119,6 +119,14 @@ public class ShooterSubsystem extends SubsystemBase {
         .withName("Shooting");
   }
 
+  public void setShooter(boolean enabled) {
+    if (enabled) {
+      setShooterOn();
+    } else {
+      setShooterOff();
+    }
+  }
+
   @Override
   public void periodic() {
     // Display subsystem values

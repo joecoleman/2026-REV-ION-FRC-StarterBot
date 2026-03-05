@@ -38,6 +38,14 @@ public class FeederSubsystem extends SubsystemBase {
     return this.startEnd(() -> setFeederPower(FeederSetpoints.kFeed), () -> setFeederPower(0.0)).withName("Feeding");
   }
 
+  public void setFeeder(boolean enabled) {
+    if (enabled) {
+      setFeederPower(ShooterSubsystemConstants.FeederSetpoints.kFeed);
+    } else {
+      setFeederPower(0.0);
+    }
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Feeder | Applied Output", feederMotor.getAppliedOutput());

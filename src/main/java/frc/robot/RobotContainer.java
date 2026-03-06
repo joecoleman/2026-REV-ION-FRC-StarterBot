@@ -42,20 +42,23 @@ public class RobotContainer {
     configureBindings();
 
     // Configure default commands
-    m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () ->
-                m_robotDrive.drive(
-                    -MathUtil.applyDeadband(
-                        m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(
-                        m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(
-                        m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                    true),
-            m_robotDrive).withName("Robot Drive Default"));
+  m_robotDrive.setDefaultCommand(
+    // The left stick controls translation of the robot.
+    // Turning is controlled by the X axis of the right stick.
+    new RunCommand(
+      () -> {
+        // Default to 1/3 speed, left bumper = 3/4 speed
+        double speedScale = m_driverController.getHID().getLeftBumper() ? 0.75 : 0.33;
+        m_robotDrive.drive(
+          -MathUtil.applyDeadband(
+            m_driverController.getLeftY(), OIConstants.kDriveDeadband) * speedScale,
+          -MathUtil.applyDeadband(
+            m_driverController.getLeftX(), OIConstants.kDriveDeadband) * speedScale,
+          -MathUtil.applyDeadband(
+            m_driverController.getRightX(), OIConstants.kDriveDeadband) * speedScale,
+          true);
+      },
+      m_robotDrive).withName("Robot Drive Default"));
 
     SmartDashboard.putData(m_intake);
     SmartDashboard.putData(m_shooter);
@@ -82,18 +85,6 @@ public class RobotContainer {
   private void configureBindings() {
     // Left Stick Button -> Set swerve to X
     m_driverController.leftStick().whileTrue(m_robotDrive.setXCommand());
-
-    // Left Bumper -> Toggle speed drive (reduces all joystick inputs by 75)
-    m_driverController.leftBumper().toggleOnTrue(
-        new RunCommand(
-            () ->
-                m_robotDrive.drive(
-                    -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband) * 0.25,
-                    -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband) * 0.25,
-                    -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband) * 0.25,
-                    true),
-            m_robotDrive)
-        .withName("Half Speed Drive"));
 
     // Start Button -> Zero swerve heading
     m_driverController.rightBumper().onTrue(m_robotDrive.zeroHeadingCommand());

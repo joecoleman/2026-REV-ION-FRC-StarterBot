@@ -21,6 +21,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public final class Autos {
@@ -34,11 +35,12 @@ public final class Autos {
   
 
   public static Command shootAuto(
-      DriveSubsystem drive,
-      ShooterSubsystem shooter,
-      FeederSubsystem feeder
+    DriveSubsystem drive,
+    ShooterSubsystem shooter,
+    FeederSubsystem feeder,
+    IntakeSubsystem intake
   ) {
-    // Trajectory: drive ahead 1 foot (0.3048 meters)
+  // Trajectory: back up 1 meter
     TrajectoryConfig config = new TrajectoryConfig(
         AutoConstants.kMaxSpeedMetersPerSecond,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -47,7 +49,7 @@ public final class Autos {
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
         new Pose2d(0, 0, new Rotation2d(0)),
         List.of(),
-        new Pose2d(0.3048, 0, new Rotation2d(0)),
+    new Pose2d(-1.0, 0, new Rotation2d(0)),
         config);
 
     var thetaController = new ProfiledPIDController(
@@ -67,19 +69,21 @@ public final class Autos {
     // Reset odometry to the starting pose of the trajectory.
     drive.resetOdometry(trajectory.getInitialPose());
 
-    return new SequentialCommandGroup(
-        driveForwardCommand.andThen(() -> drive.drive(0, 0, 0, false)),
-        // Shooter on for 2 seconds
-        new WaitCommand(0.1),
-        new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(true), shooter),
-        new WaitCommand(2.0),
-        // Feeder on after shooter runs for 2 seconds
-        new edu.wpi.first.wpilibj2.command.InstantCommand(() -> feeder.setFeeder(true), feeder),
-        // Wait until 10 seconds total, then stop both
-        new WaitCommand(8.0),
-        new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(false), shooter),
-        new edu.wpi.first.wpilibj2.command.InstantCommand(() -> feeder.setFeeder(false), feeder)
-    );
+  return new SequentialCommandGroup(
+    driveForwardCommand.andThen(() -> drive.drive(0, 0, 0, false)),
+    // Shooter on for 2 seconds
+    new WaitCommand(1.0),
+    new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(true), shooter),
+    new WaitCommand(2.0),
+    // Run feeder and intake together for 8 seconds
+    new edu.wpi.first.wpilibj2.command.InstantCommand(() -> {}, feeder, intake),
+    new edu.wpi.first.wpilibj2.command.ParallelCommandGroup(
+      feeder.runFeederCommand(),
+      intake.runIntakeCommand()
+    ).withTimeout(8.0),
+    // Stop shooter
+    new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(false), shooter)
+  );
   }
 
   private Autos() {

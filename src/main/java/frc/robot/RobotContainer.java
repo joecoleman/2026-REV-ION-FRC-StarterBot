@@ -118,6 +118,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     
-    return Autos.shootAuto(m_robotDrive, m_shooter, m_feeder);
+    return Autos.shootAuto(m_robotDrive, m_shooter, m_feeder, m_intake);
   }
 }

@@ -35,6 +35,9 @@ public class RobotContainer {
   // The driver's controller
   private final CommandXboxController m_driverController =
       new CommandXboxController(OIConstants.kDriverControllerPort);
+  // Operator's controller (second controller)
+  private final CommandXboxController m_operatorController =
+    new CommandXboxController(OIConstants.kOperatorControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -83,13 +86,13 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Left Stick Button -> Set swerve to X
-    m_driverController.leftStick().whileTrue(m_robotDrive.setXCommand());
+    // Left Stick Button -> Set swerve to zero heading
+    m_driverController.leftStick().whileTrue(m_robotDrive.zeroHeadingCommand());
 
-    // Start Button -> Zero swerve heading
-    m_driverController.rightBumper().onTrue(m_robotDrive.zeroHeadingCommand());
+    // toggle intake on/off with A button
+    m_driverController.a().toggleOnTrue(m_intake.runIntakeCommand());
     // A button -> Run flywheel while held
-    m_driverController
+    m_operatorController
       .a()
       .whileTrue(m_shooter.runFlywheelCommand());
     // Right Trigger -> Run fuel intake in reverse
@@ -109,6 +112,12 @@ public class RobotContainer {
     m_driverController
       .x()
       .whileTrue(m_feeder.runFeederCommand().withName("Feeder - Toggle"));
+
+    // Operator controller bindings
+    // Y -> Toggle shooter on/off (operator)
+    m_operatorController.y().toggleOnTrue(m_shooter.runShooterCommand());
+    // X -> Run feeder while held (operator)
+    m_operatorController.x().whileTrue(m_feeder.runFeederCommand().withName("Feeder - Operator"));
   }
 
   /**

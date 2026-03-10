@@ -40,7 +40,7 @@ public final class Autos {
     FeederSubsystem feeder,
     IntakeSubsystem intake
   ) {
-  // Trajectory: back up 1 meter
+  // Trajectory: drive ahead 1 foot (0.3048 meters)
     TrajectoryConfig config = new TrajectoryConfig(
         AutoConstants.kMaxSpeedMetersPerSecond,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -49,7 +49,7 @@ public final class Autos {
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
         new Pose2d(0, 0, new Rotation2d(0)),
         List.of(),
-    new Pose2d(-1.0, 0, new Rotation2d(0)),
+        new Pose2d(0.9, 0, new Rotation2d(0)),
         config);
 
     var thetaController = new ProfiledPIDController(

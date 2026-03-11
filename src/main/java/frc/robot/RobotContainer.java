@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -38,6 +39,9 @@ public class RobotContainer {
   // Operator's controller (second controller)
   private final CommandXboxController m_operatorController =
     new CommandXboxController(OIConstants.kOperatorControllerPort);
+
+  // Autonomous chooser
+  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -74,6 +78,12 @@ public class RobotContainer {
 
     SmartDashboard.putData("Feeder", m_feeder.runFeederCommand().withName("Feeder - Feeding"));
     SmartDashboard.putData("Flywheel", m_shooter.runFlywheelCommand().withName("Shooter - Spinning up Flywheel"));
+
+    // Autonomous chooser setup
+    m_autoChooser.setDefaultOption("Shoot Auto", Autos.shootAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
+    m_autoChooser.addOption("Complex Auto", Autos.complexAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
+    m_autoChooser.addOption("Simple Auto", Autos.simpleAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
+    SmartDashboard.putData("Auto Chooser", m_autoChooser);
   }
 
   /**
@@ -119,7 +129,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    
-    return Autos.shootAuto(m_robotDrive, m_shooter, m_feeder, m_intake);
+    return m_autoChooser.getSelected();
   }
 }

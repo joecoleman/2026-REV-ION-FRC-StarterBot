@@ -20,9 +20,7 @@ public final class Autos {
 
   
 
-    
-
-    
+ 
    
   
 
@@ -53,40 +51,31 @@ public final class Autos {
   );
   }
 
-  @SuppressWarnings("unused")
   public static Command complexAuto(
       DriveSubsystem drive,
       ShooterSubsystem shooter,
       FeederSubsystem feeder,
       IntakeSubsystem intake
   ) {
-  // Distances for complexAuto sequence (meters)
-  // 3 meters forward
-  double forward1 = 3.0;
-  // 1 meter backward
-  double backward = 1.0;
-  // 1 meter forward
-  double forward2 = 1.0;
-
-    // Sequence
+    // Sequence (timed commands)
     return new SequentialCommandGroup(
-      // Drive forward 150 inches
-  new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.10, 0, 0, false), drive).withTimeout(3.0),
-  new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
+      // Drive forward ~3 seconds
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.10, 0, 0, false), drive).withTimeout(3.0),
+      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Wait 3 seconds
       new WaitCommand(3.0),
-      // Back up 50 inches
-  new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.15, 0, 0, false), drive).withTimeout(1.0),
-  new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
-      // Turn 90 degrees right
-  new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.0),
-  new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
-      // Drive forward 1 meter
-  new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.15, 0, 0, false), drive).withTimeout(1.0),
-  new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
-      // Turn 90 degrees right again
-  new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.0),
-  new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
+      // Back up ~1 second
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.15, 0, 0, false), drive).withTimeout(1.0),
+      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
+      // Turn 90 degrees right (~1s)
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.0),
+      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
+      // Drive forward ~1 second
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.15, 0, 0, false), drive).withTimeout(1.0),
+      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
+      // Turn 90 degrees right again (~1s)
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.0),
+      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Activate shooter
       new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(true), shooter),
       // Wait 3 seconds
@@ -100,6 +89,7 @@ public final class Autos {
       new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(false), shooter)
     );
   }
+
 
   public static Command simpleAuto(
       DriveSubsystem drive,
@@ -145,6 +135,61 @@ public final class Autos {
     new WaitCommand(3.0),
     backCmd,
     turnCmd);
+  }
+
+  /**
+   * Drive sequence like simpleAuto, then shoot: after the turn activate the shooter for 3s,
+   * then run feeder+intake for 8s.
+   */
+  public static Command driveThenShootAuto(
+    DriveSubsystem drive,
+    ShooterSubsystem shooter,
+    FeederSubsystem feeder,
+    IntakeSubsystem intake) {
+
+  double driveFraction = 0.10; // fraction of max linear speed to use for translation
+  double rotFraction = 0.10; // fraction of max angular speed to use for rotation
+
+  double forwardMeters = 2.55;
+  double backwardMeters = 1.0;
+  double turnDegrees = 105.0; // right turn (match simpleAuto)
+
+  AtomicReference<Pose2d> startPose = new AtomicReference<>();
+  AtomicReference<Double> startHeading = new AtomicReference<>();
+
+  Command forwardCmd = new edu.wpi.first.wpilibj2.command.InstantCommand(() -> startPose.set(drive.getPose()))
+    .andThen(new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(driveFraction, 0, 0, false), drive)
+      .until(() -> drive.getPose().getTranslation().getDistance(startPose.get().getTranslation()) >= forwardMeters))
+    .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive));
+
+  Command backCmd = new edu.wpi.first.wpilibj2.command.InstantCommand(() -> startPose.set(drive.getPose()))
+    .andThen(new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-driveFraction, 0, 0, false), drive)
+      .until(() -> drive.getPose().getTranslation().getDistance(startPose.get().getTranslation()) >= backwardMeters))
+    .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive));
+
+  Command turnCmd = new edu.wpi.first.wpilibj2.command.InstantCommand(() -> startHeading.set(drive.getHeading()))
+    .andThen(new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -rotFraction, false), drive)
+      .until(() -> {
+        double delta = Math.IEEEremainder(drive.getHeading() - startHeading.get(), 360.0);
+        return Math.abs(delta) >= Math.abs(turnDegrees);
+      }))
+    .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive));
+
+  // Shooter sequence: after the turn activate shooter for 3s, then run feeder+intake for 8s
+  Command shooterSequence = new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(true), shooter)
+    .andThen(new WaitCommand(3.0))
+    .andThen(new edu.wpi.first.wpilibj2.command.ParallelCommandGroup(
+      feeder.runFeederCommand(),
+      intake.runIntakeCommand()
+    ).withTimeout(8.0))
+    .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(false), shooter));
+
+  return new SequentialCommandGroup(
+    forwardCmd,
+    new WaitCommand(3.0),
+    backCmd,
+    turnCmd,
+    shooterSequence);
   }
 
   private Autos() {

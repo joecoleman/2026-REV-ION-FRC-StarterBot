@@ -80,9 +80,10 @@ public class RobotContainer {
     SmartDashboard.putData("Flywheel", m_shooter.runFlywheelCommand().withName("Shooter - Spinning up Flywheel"));
 
     // Autonomous chooser setup
-    m_autoChooser.setDefaultOption("Shoot Auto", Autos.shootAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
-    m_autoChooser.addOption("Complex Auto", Autos.complexAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
-    m_autoChooser.addOption("Simple Auto", Autos.simpleAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
+  m_autoChooser.setDefaultOption("Shoot Auto", Autos.shootAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
+  m_autoChooser.addOption("Complex Auto", Autos.complexAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
+  m_autoChooser.addOption("Simple Auto", Autos.simpleAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
+  m_autoChooser.addOption("Drive Then Shoot Auto", Autos.driveThenShootAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
   }
 

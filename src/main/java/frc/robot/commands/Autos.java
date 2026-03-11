@@ -70,7 +70,7 @@ public final class Autos {
     // Sequence
     return new SequentialCommandGroup(
       // Drive forward 150 inches
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.5, 0, 0, false), drive).withTimeout(3.0),
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.15, 0, 0, false), drive).withTimeout(3.0),
       new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Wait 3 seconds
       new WaitCommand(3.0),

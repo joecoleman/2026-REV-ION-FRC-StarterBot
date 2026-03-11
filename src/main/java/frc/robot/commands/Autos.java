@@ -100,6 +100,27 @@ public final class Autos {
     );
   }
 
+  public static Command simpleAuto(
+      DriveSubsystem drive,
+      ShooterSubsystem shooter,
+      FeederSubsystem feeder,
+      IntakeSubsystem intake
+  ) {
+    return new SequentialCommandGroup(
+      // Drive forward 3.8 meters
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.5, 0, 0, false), drive).withTimeout(3.0),
+      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
+      // Wait 3 seconds
+      new WaitCommand(3.0),
+      // Back up 1 meter
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.5, 0, 0, false), drive).withTimeout(1.0),
+      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
+      // Turn 125 degrees right
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.5, false), drive).withTimeout(1.4),
+      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive)
+    );
+  }
+
   private Autos() {
     throw new UnsupportedOperationException("This is a utility class!");
   }

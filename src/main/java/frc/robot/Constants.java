@@ -23,8 +23,8 @@ public final class Constants {
     public static final int kIntakeMotorCanId = 2;    // SPARK Max CAN ID
 
     public static final class IntakeSetpoints {
-      public static final double kIntake = 0.60;
-      public static final double kExtake = -0.50;
+      public static final double kIntake = 1.0;
+      public static final double kExtake = -1.0;
     }
   }
 

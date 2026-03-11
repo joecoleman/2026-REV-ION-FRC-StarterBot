@@ -75,16 +75,16 @@ public final class Autos {
       // Wait 3 seconds
       new WaitCommand(3.0),
       // Back up 50 inches
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.5, 0, 0, false), drive).withTimeout(1.0),
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.15, 0, 0, false), drive).withTimeout(1.0),
       new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Turn 90 degrees right
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.5, false), drive).withTimeout(1.0),
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.0),
       new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Drive forward 1 meter
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.5, 0, 0, false), drive).withTimeout(1.0),
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.15, 0, 0, false), drive).withTimeout(1.0),
       new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Turn 90 degrees right again
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.5, false), drive).withTimeout(1.0),
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.0),
       new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Activate shooter
       new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(true), shooter),
@@ -108,15 +108,15 @@ public final class Autos {
   ) {
     return new SequentialCommandGroup(
       // Drive forward 3.8 meters
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.5, 0, 0, false), drive).withTimeout(3.0),
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.15, 0, 0, false), drive).withTimeout(3.0),
       new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Wait 3 seconds
       new WaitCommand(3.0),
       // Back up 1 meter
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.5, 0, 0, false), drive).withTimeout(1.0),
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.15, 0, 0, false), drive).withTimeout(1.0),
       new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Turn 125 degrees right
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.5, false), drive).withTimeout(1.4),
+      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.4),
       new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive)
     );
   }

@@ -8,6 +8,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import java.util.concurrent.atomic.AtomicReference;
+import edu.wpi.first.math.geometry.Pose2d;
  
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
@@ -33,10 +35,10 @@ public final class Autos {
   // No initial trajectory: start directly with the timed backward drive
 
   return new SequentialCommandGroup(
-    // Drive backwards for 1 second (instead of waiting) before starting the shooter
-    new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.15, 0, 0, false), drive)
-        .withTimeout(1.0)
-        .andThen(() -> drive.drive(0, 0, 0, false)),
+  // Drive backwards for 1 second (instead of waiting) before starting the shooter
+  new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.15, 0, 0, false), drive)
+    .withTimeout(1.0)
+    .andThen(() -> drive.drive(0, 0, 0, false)),
     // Shooter on for 2 seconds
     new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(true), shooter),
     new WaitCommand(2.0),
@@ -58,34 +60,33 @@ public final class Autos {
       FeederSubsystem feeder,
       IntakeSubsystem intake
   ) {
-    // Conversion constants
-    final double INCHES_TO_METERS = 0.0254;
-    // 150 inches forward
-    double forward1 = 150 * INCHES_TO_METERS;
-    // 50 inches backward
-    double backward = 50 * INCHES_TO_METERS;
-    // 1 meter forward
-    double forward2 = 1.0;
+  // Distances for complexAuto sequence (meters)
+  // 3 meters forward
+  double forward1 = 3.0;
+  // 1 meter backward
+  double backward = 1.0;
+  // 1 meter forward
+  double forward2 = 1.0;
 
     // Sequence
     return new SequentialCommandGroup(
       // Drive forward 150 inches
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.15, 0, 0, false), drive).withTimeout(3.0),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
+  new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.10, 0, 0, false), drive).withTimeout(3.0),
+  new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Wait 3 seconds
       new WaitCommand(3.0),
       // Back up 50 inches
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.15, 0, 0, false), drive).withTimeout(1.0),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
+  new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.15, 0, 0, false), drive).withTimeout(1.0),
+  new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Turn 90 degrees right
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.0),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
+  new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.0),
+  new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Drive forward 1 meter
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.15, 0, 0, false), drive).withTimeout(1.0),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
+  new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.15, 0, 0, false), drive).withTimeout(1.0),
+  new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Turn 90 degrees right again
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.0),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
+  new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.0),
+  new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
       // Activate shooter
       new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(true), shooter),
       // Wait 3 seconds
@@ -106,19 +107,44 @@ public final class Autos {
       FeederSubsystem feeder,
       IntakeSubsystem intake
   ) {
-    return new SequentialCommandGroup(
-      // Drive forward 3.8 meters
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.15, 0, 0, false), drive).withTimeout(3.0),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
-      // Wait 3 seconds
-      new WaitCommand(3.0),
-      // Back up 1 meter
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.15, 0, 0, false), drive).withTimeout(1.0),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
-      // Turn 125 degrees right
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.4),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive)
-    );
+  // Use odometry-based 'run until' commands so the robot stops when the pose/heading target is reached.
+  double driveFraction = 0.10; // fraction of max linear speed to use for translation
+  double rotFraction = 0.10; // fraction of max angular speed to use for rotation
+
+  double forwardMeters = 2.55;
+  double backwardMeters = 1.0;
+  double turnDegrees = 105.0; // right turn
+
+  // Holders for start pose/heading
+  AtomicReference<Pose2d> startPose = new AtomicReference<>();
+  AtomicReference<Double> startHeading = new AtomicReference<>();
+
+  // Drive forward until distance reached
+  Command forwardCmd = new edu.wpi.first.wpilibj2.command.InstantCommand(() -> startPose.set(drive.getPose()))
+    .andThen(new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(driveFraction, 0, 0, false), drive)
+      .until(() -> drive.getPose().getTranslation().getDistance(startPose.get().getTranslation()) >= forwardMeters))
+    .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive));
+
+  // Back up until distance reached
+  Command backCmd = new edu.wpi.first.wpilibj2.command.InstantCommand(() -> startPose.set(drive.getPose()))
+    .andThen(new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-driveFraction, 0, 0, false), drive)
+      .until(() -> drive.getPose().getTranslation().getDistance(startPose.get().getTranslation()) >= backwardMeters))
+    .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive));
+
+  // Turn right until heading changed by ~90 degrees
+  Command turnCmd = new edu.wpi.first.wpilibj2.command.InstantCommand(() -> startHeading.set(drive.getHeading()))
+    .andThen(new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -rotFraction, false), drive)
+      .until(() -> {
+        double delta = Math.IEEEremainder(drive.getHeading() - startHeading.get(), 360.0);
+        return Math.abs(delta) >= Math.abs(turnDegrees);
+      }))
+    .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive));
+
+  return new SequentialCommandGroup(
+    forwardCmd,
+    new WaitCommand(3.0),
+    backCmd,
+    turnCmd);
   }
 
   private Autos() {

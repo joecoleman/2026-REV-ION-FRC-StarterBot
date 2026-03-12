@@ -51,44 +51,6 @@ public final class Autos {
   );
   }
 
-  public static Command complexAuto(
-      DriveSubsystem drive,
-      ShooterSubsystem shooter,
-      FeederSubsystem feeder,
-      IntakeSubsystem intake
-  ) {
-    // Sequence (timed commands)
-    return new SequentialCommandGroup(
-      // Drive forward ~3 seconds
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.10, 0, 0, false), drive).withTimeout(3.0),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
-      // Wait 3 seconds
-      new WaitCommand(3.0),
-      // Back up ~1 second
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.15, 0, 0, false), drive).withTimeout(1.0),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
-      // Turn 90 degrees right (~1s)
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.0),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
-      // Drive forward ~1 second
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0.15, 0, 0, false), drive).withTimeout(1.0),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
-      // Turn 90 degrees right again (~1s)
-      new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(0, 0, -0.15, false), drive).withTimeout(1.0),
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive),
-      // Activate shooter
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(true), shooter),
-      // Wait 3 seconds
-      new WaitCommand(3.0),
-      // Run feeder and intake for 10 seconds
-      new edu.wpi.first.wpilibj2.command.ParallelCommandGroup(
-        feeder.runFeederCommand(),
-        intake.runIntakeCommand()
-      ).withTimeout(10.0),
-      // Stop shooter
-      new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(false), shooter)
-    );
-  }
 
 
   public static Command simpleAuto(

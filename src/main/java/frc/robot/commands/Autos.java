@@ -135,6 +135,11 @@ public final class Autos {
         double delta = Math.IEEEremainder(drive.getHeading() - startHeading.get(), 360.0);
         return Math.abs(delta) >= Math.abs(turnDegrees);
       }))
+    .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive))
+    // After the turn, drive forward 0.5 meters
+    .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> startPose.set(drive.getPose())))
+    .andThen(new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(driveFraction, 0, 0, false), drive)
+      .until(() -> drive.getPose().getTranslation().getDistance(startPose.get().getTranslation()) >= 0.5))
     .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive));
 
   // Shooter sequence: after the turn activate shooter for 3s, then run feeder+intake for 8s

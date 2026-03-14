@@ -68,7 +68,7 @@ public final class Autos {
   double driveFraction = 0.10; // fraction of max linear speed to use for translation
   double rotFraction = 0.10; // fraction of max angular speed to use for rotation
 
-  double forwardMeters = 2.55;
+  double forwardMeters = 2.60;
   double backwardMeters = 1.0;
   double turnDegrees = 105.0; // right turn
 
@@ -117,7 +117,7 @@ public final class Autos {
   double driveFraction = 0.10; // fraction of max linear speed to use for translation
   double rotFraction = 0.10; // fraction of max angular speed to use for rotation
 
-  double forwardMeters = 2.55;
+  double forwardMeters = 2.60;
   double backwardMeters = 1.0;
   double turnDegrees = 105.0; // right turn (match simpleAuto)
 

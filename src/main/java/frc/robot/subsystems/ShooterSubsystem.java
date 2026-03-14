@@ -45,6 +45,12 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     System.out.println("---> ShooterSubsystem initialized");
+    // Expose the shooter setpoint on the SmartDashboard so it can be tuned at runtime.
+    try {
+      SmartDashboard.putNumber("Shooter | Flywheel | Setpoint", FlywheelSetpoints.kShootPercent);
+    } catch (Throwable ignored) {
+      // If SmartDashboard isn't present in the environment, ignore.
+    }
   }
 
   // Trigger: Is the flywheel spinning (open-loop, based on commanded/actual percent)?
@@ -65,7 +71,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /** Turn the shooter on full (uses FlywheelSetpoints.kShootPercent) */
   public void setShooterOn() {
-    setShooterOutput(FlywheelSetpoints.kShootPercent);
+    // Read the desired setpoint from SmartDashboard (falls back to constant if missing)
+    double setpoint = FlywheelSetpoints.kShootPercent;
+    try {
+      setpoint = SmartDashboard.getNumber("Shooter | Flywheel | Setpoint", FlywheelSetpoints.kShootPercent);
+    } catch (Throwable ignored) {
+    }
+    setShooterOutput(setpoint);
     // Ensure follower mirrors leader
     try {
       flywheelFollowerMotor.follow(flywheelMotor);

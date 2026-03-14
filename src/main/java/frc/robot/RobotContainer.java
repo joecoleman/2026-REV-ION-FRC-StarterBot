@@ -82,7 +82,7 @@ public class RobotContainer {
     // Autonomous chooser setup
   m_autoChooser.setDefaultOption("Taco Tuesday", Autos.shootAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
   m_autoChooser.addOption("Chips And Salsa", Autos.simpleAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
-  m_autoChooser.addOption("The Whole Enchilada Auto", Autos.driveThenShootAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
+  m_autoChooser.addOption("The Whole Enchilada", Autos.driveThenShootAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
   }
 

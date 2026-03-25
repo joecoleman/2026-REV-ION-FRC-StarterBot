@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -68,22 +70,61 @@ public class RobotContainer {
       m_robotDrive).withName("Robot Drive Default"));
 
     SmartDashboard.putData(m_intake);
+    try {
+      Shuffleboard.getTab("Driver").add("Intake Subsystem", m_intake).withSize(2, 1);
+    } catch (Throwable ignored) {
+    }
     SmartDashboard.putData(m_shooter);
+    try {
+      Shuffleboard.getTab("Driver").add("Shooter Subsystem", m_shooter).withSize(2, 1);
+    } catch (Throwable ignored) {
+    }
     SmartDashboard.putData(m_feeder);
+    try {
+      Shuffleboard.getTab("Driver").add("Feeder Subsystem", m_feeder).withSize(2, 1);
+    } catch (Throwable ignored) {
+    }
 
     SmartDashboard.putNumber("Bat Voltage", RobotController.getBatteryVoltage());
+    try {
+      Shuffleboard.getTab("Driver").add("Bat Voltage", RobotController.getBatteryVoltage()).withWidget(BuiltInWidgets.kTextView).withSize(1, 1);
+    } catch (Throwable ignored) {
+    }
 
     SmartDashboard.putData("Intake", m_intake.runIntakeCommand().withName("Intake - Intaking"));
+    try {
+      Shuffleboard.getTab("Driver").add("Intake", m_intake.runIntakeCommand().withName("Intake - Intaking"));
+    } catch (Throwable ignored) {
+    }
     SmartDashboard.putData("Extake", m_intake.runExtakeCommand().withName("Intake - Extaking"));
+    try {
+      Shuffleboard.getTab("Driver").add("Extake", m_intake.runExtakeCommand().withName("Intake - Extaking"));
+    } catch (Throwable ignored) {
+    }
 
     SmartDashboard.putData("Feeder", m_feeder.runFeederCommand().withName("Feeder - Feeding"));
+    try {
+      Shuffleboard.getTab("Driver").add("Feeder", m_feeder.runFeederCommand().withName("Feeder - Feeding"));
+    } catch (Throwable ignored) {
+    }
     SmartDashboard.putData("Flywheel", m_shooter.runFlywheelCommand().withName("Shooter - Spinning up Flywheel"));
+    try {
+      Shuffleboard.getTab("Driver").add("Flywheel", m_shooter.runFlywheelCommand().withName("Shooter - Spinning up Flywheel"));
+    } catch (Throwable ignored) {
+    }
 
     // Autonomous chooser setup
   m_autoChooser.setDefaultOption("Taco Tuesday", Autos.shootAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
   m_autoChooser.addOption("Chips And Salsa", Autos.simpleAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
   m_autoChooser.addOption("The Whole Enchilada", Autos.driveThenShootAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
+    try {
+      Shuffleboard.getTab("Driver")
+          .add("Auto Chooser", m_autoChooser)
+          .withWidget(BuiltInWidgets.kComboBoxChooser)
+          .withSize(2, 1);
+    } catch (Throwable ignored) {
+    }
   }
 
   /**

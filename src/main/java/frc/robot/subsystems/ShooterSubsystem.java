@@ -8,6 +8,9 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -27,6 +30,13 @@ public class ShooterSubsystem extends SubsystemBase {
   private double flywheelTargetOutput = 0.0;
   // Track whether shooter is enabled (open-loop on)
   private boolean shooterEnabled = false;
+  // Shuffleboard entry for a colored boolean box
+  private GenericEntry shooterEngagedEntry = null;
+  private GenericEntry shooterSetpointEntry = null;
+  private GenericEntry shooterCommandedEntry = null;
+  private GenericEntry shooterActualEntry = null;
+  private GenericEntry isFlywheelSpinningEntry = null;
+  private GenericEntry isFlywheelStoppedEntry = null;
 
   public ShooterSubsystem() {
     // Configure VictorSPX for open-loop operation. These calls require CTRE Phoenix on the classpath.
@@ -48,6 +58,49 @@ public class ShooterSubsystem extends SubsystemBase {
     // Expose the shooter setpoint on the SmartDashboard so it can be tuned at runtime.
     try {
       SmartDashboard.putNumber("Shooter | Flywheel | Setpoint", FlywheelSetpoints.kShootPercent);
+      // Expose a boolean that can be shown as an LED/boolean box on the dashboard.
+      SmartDashboard.putBoolean("Shooter | Engaged", shooterEnabled);
+      // Also create a Shuffleboard Boolean Box widget (shows a colored box) if Shuffleboard is available.
+      try {
+        shooterEngagedEntry = Shuffleboard.getTab("Driver")
+            .add("Shooter | Engaged", shooterEnabled)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withSize(1, 1)
+            .getEntry();
+        shooterEngagedEntry.setBoolean(shooterEnabled);
+      // Additional Shuffleboard entries for telemetry
+      shooterSetpointEntry = Shuffleboard.getTab("Driver")
+        .add("Shooter | Flywheel | Setpoint", FlywheelSetpoints.kShootPercent)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withSize(2, 1)
+        .getEntry();
+      shooterSetpointEntry.setDouble(FlywheelSetpoints.kShootPercent);
+
+      shooterCommandedEntry = Shuffleboard.getTab("Driver")
+        .add("Shooter | Flywheel | Commanded Output", 0.0)
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .getEntry();
+      shooterActualEntry = Shuffleboard.getTab("Driver")
+        .add("Shooter | Flywheel | Actual Output", 0.0)
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .getEntry();
+
+      isFlywheelSpinningEntry = Shuffleboard.getTab("Driver")
+        .add("Is Flywheel Spinning", isFlywheelSpinning.getAsBoolean())
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .getEntry();
+
+      isFlywheelStoppedEntry = Shuffleboard.getTab("Driver")
+        .add("Is Flywheel Stopped", isFlywheelStopped.getAsBoolean())
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .getEntry();
+      } catch (Throwable ignored) {
+        // If Shuffleboard not available, ignore and rely on SmartDashboard boolean.
+      }
     } catch (Throwable ignored) {
       // If SmartDashboard isn't present in the environment, ignore.
     }
@@ -81,6 +134,14 @@ public class ShooterSubsystem extends SubsystemBase {
     // Ensure follower mirrors leader
     try {
       flywheelFollowerMotor.follow(flywheelMotor);
+    } catch (Throwable ignored) {
+    }
+    // Update dashboard LED
+    try {
+      SmartDashboard.putBoolean("Shooter | Engaged", shooterEnabled);
+      if (shooterEngagedEntry != null) {
+        shooterEngagedEntry.setBoolean(shooterEnabled);
+      }
     } catch (Throwable ignored) {
     }
   }
@@ -152,5 +213,29 @@ public class ShooterSubsystem extends SubsystemBase {
 
     SmartDashboard.putBoolean("Is Flywheel Spinning", isFlywheelSpinning.getAsBoolean());
     SmartDashboard.putBoolean("Is Flywheel Stopped", isFlywheelStopped.getAsBoolean());
+    // Dashboard LED for shooter engaged
+    try {
+      SmartDashboard.putBoolean("Shooter | Engaged", shooterEnabled);
+      if (shooterEngagedEntry != null) {
+        shooterEngagedEntry.setBoolean(shooterEnabled);
+      }
+      if (shooterSetpointEntry != null) {
+        double sp = SmartDashboard.getNumber("Shooter | Flywheel | Setpoint", FlywheelSetpoints.kShootPercent);
+        shooterSetpointEntry.setDouble(sp);
+      }
+      if (shooterCommandedEntry != null) {
+        shooterCommandedEntry.setDouble(flywheelTargetOutput);
+      }
+      if (shooterActualEntry != null) {
+        shooterActualEntry.setDouble(flywheelMotor.get());
+      }
+      if (isFlywheelSpinningEntry != null) {
+        isFlywheelSpinningEntry.setBoolean(isFlywheelSpinning.getAsBoolean());
+      }
+      if (isFlywheelStoppedEntry != null) {
+        isFlywheelStoppedEntry.setBoolean(isFlywheelStopped.getAsBoolean());
+      }
+    } catch (Throwable ignored) {
+    }
   }
 }

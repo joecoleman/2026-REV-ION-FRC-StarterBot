@@ -68,11 +68,11 @@ public final class Autos {
   double driveFraction = 0.10; // fraction of max linear speed to use for translation
   double rotFraction = 0.10; // fraction of max angular speed to use for rotation
 
-  double forwardMeters = 2.60;
+  double forwardMeters = 2.70;
   double backwardMeters = 1.0;
-  double turnDegrees = 105.0; // right turn
+  double turnDegrees = 100; // right turn
 
-  // Holders for start pose/heading
+  // Holders for start pose/heading+++++++++++++++++++++
   AtomicReference<Pose2d> startPose = new AtomicReference<>();
   AtomicReference<Double> startHeading = new AtomicReference<>();
 
@@ -117,9 +117,10 @@ public final class Autos {
   double driveFraction = 0.10; // fraction of max linear speed to use for translation
   double rotFraction = 0.10; // fraction of max angular speed to use for rotation
 
-  double forwardMeters = 2.60;
+  double forwardMeters = 2.70
+  ;
   double backwardMeters = 1.0;
-  double turnDegrees = 105.0; // right turn (match simpleAuto)
+  double turnDegrees = 100; // right turn (match simpleAuto)
 
   AtomicReference<Pose2d> startPose = new AtomicReference<>();
   AtomicReference<Double> startHeading = new AtomicReference<>();
@@ -150,12 +151,18 @@ public final class Autos {
       intake.runIntakeCommand()
     ).withTimeout(8.0))
     .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(false), shooter));
+  // After the turn, drive forward 1 meter before starting the shooter
+  Command forwardAfterTurn = new edu.wpi.first.wpilibj2.command.InstantCommand(() -> startPose.set(drive.getPose()))
+    .andThen(new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(driveFraction, 0, 0, false), drive)
+      .until(() -> drive.getPose().getTranslation().getDistance(startPose.get().getTranslation()) >= 1.0))
+    .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive));
 
   return new SequentialCommandGroup(
     forwardCmd,
     new WaitCommand(3.0),
     backCmd,
     turnCmd,
+    forwardAfterTurn,
     shooterSequence);
   }
 

@@ -7,6 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -19,6 +22,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+  private GenericEntry batVoltageEntry = null;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -30,6 +34,15 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     SmartDashboard.putData(CommandScheduler.getInstance());
+    try {
+      batVoltageEntry = Shuffleboard.getTab("Driver")
+          .add("Bat Voltage", RobotController.getBatteryVoltage())
+          .withWidget(BuiltInWidgets.kTextView)
+          .withSize(1, 1)
+          .getEntry();
+      batVoltageEntry.setDouble(RobotController.getBatteryVoltage());
+    } catch (Throwable ignored) {
+    }
   }
 
   /**
@@ -47,6 +60,12 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Bat Voltage", RobotController.getBatteryVoltage());
+    try {
+      if (batVoltageEntry != null) {
+        batVoltageEntry.setDouble(RobotController.getBatteryVoltage());
+      }
+    } catch (Throwable ignored) {
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

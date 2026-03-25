@@ -9,6 +9,9 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -22,6 +25,8 @@ public class FeederSubsystem extends SubsystemBase {
 
   private SparkMax feederMotor =
       new SparkMax(ShooterSubsystemConstants.kFeederMotorCanId, MotorType.kBrushless);
+  private GenericEntry feederAppliedEntry = null;
+  private GenericEntry feederCurrentEntry = null;
 
 
   
@@ -50,5 +55,26 @@ public class FeederSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Feeder | Applied Output", feederMotor.getAppliedOutput());
     SmartDashboard.putNumber("Feeder | Current", feederMotor.getOutputCurrent());
+    try {
+      if (feederAppliedEntry == null) {
+        feederAppliedEntry = Shuffleboard.getTab("Driver")
+            .add("Feeder | Applied Output", feederMotor.getAppliedOutput())
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(1, 1)
+            .getEntry();
+      }
+      feederAppliedEntry.setDouble(feederMotor.getAppliedOutput());
+
+      if (feederCurrentEntry == null) {
+        feederCurrentEntry = Shuffleboard.getTab("Driver")
+            .add("Feeder | Current", feederMotor.getOutputCurrent())
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(1, 1)
+            .getEntry();
+      }
+      feederCurrentEntry.setDouble(feederMotor.getOutputCurrent());
+    } catch (Throwable ignored) {
+      // If Shuffleboard not available, ignore.
+    }
   }
 }

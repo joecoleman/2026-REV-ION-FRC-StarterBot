@@ -9,6 +9,9 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
@@ -19,6 +22,7 @@ public class IntakeSubsystem extends SubsystemBase {
   // Initialize intake SPARK. We will use open loop control for this.
   private SparkMax intakeMotor =
       new SparkMax(IntakeSubsystemConstants.kIntakeMotorCanId, MotorType.kBrushless);
+  private GenericEntry intakeAppliedEntry = null;
 
   
 
@@ -83,6 +87,17 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // Display subsystem values
     SmartDashboard.putNumber("Intake | Intake | Applied Output", intakeMotor.getAppliedOutput());
+    try {
+      if (intakeAppliedEntry == null) {
+        intakeAppliedEntry = Shuffleboard.getTab("Driver")
+            .add("Intake | Intake | Applied Output", intakeMotor.getAppliedOutput())
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(1, 1)
+            .getEntry();
+      }
+      intakeAppliedEntry.setDouble(intakeMotor.getAppliedOutput());
+    } catch (Throwable ignored) {
+    }
   }
 
 }

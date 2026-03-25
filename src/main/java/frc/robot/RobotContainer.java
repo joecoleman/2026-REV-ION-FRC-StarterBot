@@ -20,6 +20,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.IntakeLiftSubsystem;
 
 
 /**
@@ -34,6 +35,7 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final FeederSubsystem m_feeder = new FeederSubsystem();
+  private final IntakeLiftSubsystem m_intakeLift = new IntakeLiftSubsystem();
 
   // The driver's controller
   private final CommandXboxController m_driverController =
@@ -156,7 +158,12 @@ public class RobotContainer {
       .leftTrigger(OIConstants.kTriggerButtonThreshold)
       .whileTrue(m_intake.runExtakeCommand());
 
-    
+    // B button -> Raise intake lift while held
+    m_driverController.b().whileTrue(new RunCommand(() -> m_intakeLift.setLiftPower(0.5), m_intakeLift));
+    // A button -> Lower intake lift while held
+    m_driverController.a().whileTrue(new RunCommand(() -> m_intakeLift.setLiftPower(-0.5), m_intakeLift));
+    // Stop lift when button released is handled by command ending
+
     // Operator controller bindings
     // Y -> Toggle shooter on/off (operator)
     m_operatorController.leftBumper().toggleOnTrue(m_shooter.runShooterCommand());

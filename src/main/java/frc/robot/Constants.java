@@ -39,8 +39,8 @@ public final class Constants {
 
      public static final class FlywheelSetpoints {
       public static final double kShootRpm = 5000;
-    // Open-loop percent output to use for shooting (0..1). Adjust on robot as needed.
-    public static final double kShootPercent = 0.95;
+  // Open-loop percent output to use for shooting (0..1). Adjust on robot as needed.
+  public static final double kShootPercent = 100;
     // Threshold percent to consider the flywheel "spinning" (open-loop)
     public static final double kSpinThresholdPercent = 0.5;
       public static final double kVelocityTolerance = 100;

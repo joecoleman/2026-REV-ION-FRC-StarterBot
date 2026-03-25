@@ -30,13 +30,18 @@ public final class Autos {
     FeederSubsystem feeder,
     IntakeSubsystem intake
   ) {
-  // No initial trajectory: start directly with the timed backward drive
+  // No initial trajectory: start by driving backwards 1 meter (odometry-based)
+  double driveFraction = 0.15; // fraction of max linear speed for the backwards motion
+  AtomicReference<Pose2d> startPose = new AtomicReference<>();
+
+  Command backOneMeter = new edu.wpi.first.wpilibj2.command.InstantCommand(() -> startPose.set(drive.getPose()))
+      .andThen(new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-driveFraction, 0, 0, false), drive)
+          .until(() -> drive.getPose().getTranslation().getDistance(startPose.get().getTranslation()) >= 1.0))
+      .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive));
 
   return new SequentialCommandGroup(
-  // Drive backwards for 1 second (instead of waiting) before starting the shooter
-  new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(-0.15, 0, 0, false), drive)
-    .withTimeout(1.0)
-    .andThen(() -> drive.drive(0, 0, 0, false)),
+    // Drive backwards 1 meter before starting the shooter
+    backOneMeter,
     // Shooter on for 2 seconds
     new edu.wpi.first.wpilibj2.command.InstantCommand(() -> shooter.setShooter(true), shooter),
     new WaitCommand(2.0),
@@ -63,7 +68,7 @@ public final class Autos {
   double driveFraction = 0.10; // fraction of max linear speed to use for translation
   double rotFraction = 0.10; // fraction of max angular speed to use for rotation
 
-  double forwardMeters = 2.55;
+  double forwardMeters = 2.60;
   double backwardMeters = 1.0;
   double turnDegrees = 105.0; // right turn
 
@@ -112,7 +117,7 @@ public final class Autos {
   double driveFraction = 0.10; // fraction of max linear speed to use for translation
   double rotFraction = 0.10; // fraction of max angular speed to use for rotation
 
-  double forwardMeters = 2.55;
+  double forwardMeters = 2.60;
   double backwardMeters = 1.0;
   double turnDegrees = 105.0; // right turn (match simpleAuto)
 
@@ -135,11 +140,6 @@ public final class Autos {
         double delta = Math.IEEEremainder(drive.getHeading() - startHeading.get(), 360.0);
         return Math.abs(delta) >= Math.abs(turnDegrees);
       }))
-    .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive))
-    // After the turn, drive forward 0.5 meters
-    .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> startPose.set(drive.getPose())))
-    .andThen(new edu.wpi.first.wpilibj2.command.RunCommand(() -> drive.drive(driveFraction, 0, 0, false), drive)
-      .until(() -> drive.getPose().getTranslation().getDistance(startPose.get().getTranslation()) >= 0.5))
     .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive));
 
   // Shooter sequence: after the turn activate shooter for 3s, then run feeder+intake for 8s

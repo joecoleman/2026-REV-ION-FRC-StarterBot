@@ -20,6 +20,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.IntakeLiftSubsystem;
 
 
 /**
@@ -34,7 +35,7 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final FeederSubsystem m_feeder = new FeederSubsystem();
-  // Intake lift removed — no longer used
+  private final IntakeLiftSubsystem m_intakeLift = new IntakeLiftSubsystem();
 
   // The driver's controller
   private final CommandXboxController m_driverController =
@@ -84,6 +85,11 @@ public class RobotContainer {
     SmartDashboard.putData(m_feeder);
     try {
       Shuffleboard.getTab("Driver").add("Feeder Subsystem", m_feeder).withSize(2, 1);
+    } catch (Throwable ignored) {
+    }
+    SmartDashboard.putData(m_intakeLift);
+    try {
+      Shuffleboard.getTab("Driver").add("Intake Lift Subsystem", m_intakeLift).withSize(2, 1);
     } catch (Throwable ignored) {
     }
 
@@ -143,7 +149,7 @@ public class RobotContainer {
     m_driverController.leftStick().whileTrue(m_robotDrive.zeroHeadingCommand());
 
     // toggle intake on/off with A button
-    m_driverController.a().toggleOnTrue(m_intake.runIntakeCommand());
+    m_driverController.rightBumper().toggleOnTrue(m_intake.runIntakeCommand());
     // A button -> Run flywheel while held
     m_operatorController
       .a()
@@ -158,7 +164,12 @@ public class RobotContainer {
       .leftTrigger(OIConstants.kTriggerButtonThreshold)
       .whileTrue(m_intake.runExtakeCommand());
 
-  // Intake lift controls removed (subsystem deleted)
+  // Intake lift controls
+    // B button -> Raise intake lift while held
+    m_driverController.b().whileTrue(m_intakeLift.runLiftUpCommand());
+    // A button -> Lower intake lift while held
+    m_driverController.a().whileTrue(m_intakeLift.runLiftDownCommand());
+    // Stop lift when button released is handled by command ending
 
     // Operator controller bindings
     // Y -> Toggle shooter on/off (operator)

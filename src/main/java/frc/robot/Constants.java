@@ -28,6 +28,17 @@ public final class Constants {
     }
   }
 
+  public static final class IntakeLiftSubsystemConstants {
+    // CAN ID for the intake lift motor
+    public static final int kIntakeLiftMotorCanId = 8;
+
+    public static final class LiftSetpoints {
+      // Default open-loop outputs for the lift (up and down)
+      public static final double kLiftUp = 0.5;
+      public static final double kLiftDown = -0.5;
+    }
+  }
+
   public static final class ShooterSubsystemConstants {
     public static final int kFeederMotorCanId = 5;    // SPARK Max CAN ID
     public static final int kFlywheelMotorCanId = 6;  // SPARK Max CAN ID (Right)

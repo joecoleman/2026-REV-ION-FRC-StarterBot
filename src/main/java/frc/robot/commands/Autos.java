@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeLiftSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public final class Autos {
@@ -59,10 +60,11 @@ public final class Autos {
 
 
   public static Command simpleAuto(
-      DriveSubsystem drive,
-      ShooterSubsystem shooter,
-      FeederSubsystem feeder,
-      IntakeSubsystem intake
+    DriveSubsystem drive,
+    ShooterSubsystem shooter,
+    FeederSubsystem feeder,
+    IntakeSubsystem intake,
+    IntakeLiftSubsystem intakeLift
   ) {
   // Use odometry-based 'run until' commands so the robot stops when the pose/heading target is reached.
   double driveFraction = 0.10; // fraction of max linear speed to use for translation
@@ -98,6 +100,8 @@ public final class Autos {
     .andThen(new edu.wpi.first.wpilibj2.command.InstantCommand(() -> drive.drive(0, 0, 0, false), drive));
 
   return new SequentialCommandGroup(
+    // Lower the intake lift for 0.5s before driving forward
+    intakeLift.runLiftDownCommand().withTimeout(0.5),
     forwardCmd,
     new WaitCommand(3.0),
     backCmd,

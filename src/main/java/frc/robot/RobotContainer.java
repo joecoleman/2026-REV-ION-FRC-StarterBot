@@ -20,7 +20,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
-import frc.robot.subsystems.IntakeLiftSubsystem;
+import frc.robot.subsystems.LiftSubsystem;
 
 
 /**
@@ -35,7 +35,7 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final FeederSubsystem m_feeder = new FeederSubsystem();
-  private final IntakeLiftSubsystem m_intakeLift = new IntakeLiftSubsystem();
+  private final LiftSubsystem m_lift = new LiftSubsystem();
 
   // The driver's controller
   private final CommandXboxController m_driverController =
@@ -87,9 +87,9 @@ public class RobotContainer {
       Shuffleboard.getTab("Driver").add("Feeder Subsystem", m_feeder).withSize(2, 1);
     } catch (Throwable ignored) {
     }
-    SmartDashboard.putData(m_intakeLift);
+    SmartDashboard.putData(m_lift);
     try {
-      Shuffleboard.getTab("Driver").add("Intake Lift Subsystem", m_intakeLift).withSize(2, 1);
+      Shuffleboard.getTab("Driver").add("Lift Subsystem", m_lift).withSize(2, 1);
     } catch (Throwable ignored) {
     }
 
@@ -123,7 +123,7 @@ public class RobotContainer {
 
     // Autonomous chooser setup
   m_autoChooser.setDefaultOption("Taco Tuesday", Autos.shootAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
-  m_autoChooser.addOption("Chips And Salsa", Autos.simpleAuto(m_robotDrive, m_shooter, m_feeder, m_intake, m_intakeLift));
+  m_autoChooser.addOption("Chips And Salsa", Autos.simpleAuto(m_robotDrive, m_shooter, m_feeder, m_intake, m_lift));
   m_autoChooser.addOption("The Whole Enchilada", Autos.driveThenShootAuto(m_robotDrive, m_shooter, m_feeder, m_intake));
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
     try {
@@ -165,10 +165,10 @@ public class RobotContainer {
       .whileTrue(m_intake.runExtakeCommand());
 
   // Intake lift controls
-    // B button -> Raise intake lift while held
-    m_driverController.b().whileTrue(m_intakeLift.runLiftUpCommand());
-    // A button -> Lower intake lift while held
-    m_driverController.a().whileTrue(m_intakeLift.runLiftDownCommand());
+  // B button -> Raise lift while held
+  m_driverController.b().whileTrue(m_lift.runLiftUpCommand());
+  // A button -> Lower lift while held
+  m_driverController.a().whileTrue(m_lift.runLiftDownCommand());
     // Stop lift when button released is handled by command ending
 
     // Operator controller bindings

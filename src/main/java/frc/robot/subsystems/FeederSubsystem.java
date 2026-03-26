@@ -23,17 +23,28 @@ import frc.robot.Constants.ShooterSubsystemConstants;
  */
 public class FeederSubsystem extends SubsystemBase {
 
-  private SparkMax feederMotor =
-      new SparkMax(ShooterSubsystemConstants.kFeederMotorCanId, MotorType.kBrushless);
+  private SparkMax feederMotor = null;
   private GenericEntry feederAppliedEntry = null;
   private GenericEntry feederCurrentEntry = null;
+
+  /** Creates a new FeederSubsystem. Initializes the SparkMax if available. */
+  public FeederSubsystem() {
+    try {
+      feederMotor = new SparkMax(ShooterSubsystemConstants.kFeederMotorCanId, MotorType.kBrushless);
+    } catch (Throwable t) {
+      feederMotor = null;
+      System.err.println("FeederSubsystem: SparkMax unavailable or failed to initialize: " + t.getMessage());
+    }
+  }
 
 
   
 
   /** Set the feeder motor power in the range [-1, 1]. */
   public void setFeederPower(double power) {
-    feederMotor.set(power);
+    if (feederMotor != null) {
+      feederMotor.set(power);
+    }
   }
 
   /**
@@ -53,26 +64,32 @@ public class FeederSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Feeder | Applied Output", feederMotor.getAppliedOutput());
-    SmartDashboard.putNumber("Feeder | Current", feederMotor.getOutputCurrent());
+    double applied = 0.0;
+    double current = 0.0;
+    if (feederMotor != null) {
+      applied = feederMotor.getAppliedOutput();
+      current = feederMotor.getOutputCurrent();
+    }
+    SmartDashboard.putNumber("Feeder | Applied Output", applied);
+    SmartDashboard.putNumber("Feeder | Current", current);
     try {
       if (feederAppliedEntry == null) {
         feederAppliedEntry = Shuffleboard.getTab("Driver")
-            .add("Feeder | Applied Output", feederMotor.getAppliedOutput())
+            .add("Feeder | Applied Output", applied)
             .withWidget(BuiltInWidgets.kTextView)
             .withSize(1, 1)
             .getEntry();
       }
-      feederAppliedEntry.setDouble(feederMotor.getAppliedOutput());
+      feederAppliedEntry.setDouble(applied);
 
       if (feederCurrentEntry == null) {
         feederCurrentEntry = Shuffleboard.getTab("Driver")
-            .add("Feeder | Current", feederMotor.getOutputCurrent())
+            .add("Feeder | Current", current)
             .withWidget(BuiltInWidgets.kTextView)
             .withSize(1, 1)
             .getEntry();
       }
-      feederCurrentEntry.setDouble(feederMotor.getOutputCurrent());
+      feederCurrentEntry.setDouble(current);
     } catch (Throwable ignored) {
       // If Shuffleboard not available, ignore.
     }

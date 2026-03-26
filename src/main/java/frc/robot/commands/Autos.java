@@ -14,7 +14,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeLiftSubsystem;
+import frc.robot.subsystems.LiftSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public final class Autos {
@@ -64,13 +64,13 @@ public final class Autos {
     ShooterSubsystem shooter,
     FeederSubsystem feeder,
     IntakeSubsystem intake,
-    IntakeLiftSubsystem intakeLift
+    LiftSubsystem intakeLift
   ) {
   // Use odometry-based 'run until' commands so the robot stops when the pose/heading target is reached.
   double driveFraction = 0.10; // fraction of max linear speed to use for translation
   double rotFraction = 0.10; // fraction of max angular speed to use for rotation
 
-  double forwardMeters = 2.70;
+  double forwardMeters = 3.0;
   double backwardMeters = 1.0;
   double turnDegrees = 100; // right turn
 
@@ -101,7 +101,7 @@ public final class Autos {
 
   return new SequentialCommandGroup(
     // Lower the intake lift for 0.5s before driving forward
-    intakeLift.runLiftDownCommand().withTimeout(0.5),
+    intakeLift.runLiftDownCommand().withTimeout(0.75),
     forwardCmd,
     new WaitCommand(3.0),
     backCmd,

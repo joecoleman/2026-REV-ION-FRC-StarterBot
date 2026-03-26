@@ -19,9 +19,9 @@ import frc.robot.Constants.IntakeSubsystemConstants;
 import frc.robot.Constants.IntakeSubsystemConstants.IntakeSetpoints;
 
 public class IntakeSubsystem extends SubsystemBase {
-  // Initialize intake SPARK. We will use open loop control for this.
-  private SparkMax intakeMotor =
-      new SparkMax(IntakeSubsystemConstants.kIntakeMotorCanId, MotorType.kBrushless);
+  // Intake SPARK will be created in the constructor inside a try/catch so we don't fail
+  // hard if the REV libraries are not available at runtime.
+  private SparkMax intakeMotor = null;
   private GenericEntry intakeAppliedEntry = null;
 
   
@@ -38,10 +38,17 @@ public class IntakeSubsystem extends SubsystemBase {
      * the SPARK loses power. This is useful for power cycles that may occur
      * mid-operation.
      */
-    intakeMotor.configure(
-        Configs.IntakeSubsystem.intakeConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
+    try {
+      intakeMotor = new SparkMax(IntakeSubsystemConstants.kIntakeMotorCanId, MotorType.kBrushless);
+      intakeMotor.configure(
+          Configs.IntakeSubsystem.intakeConfig,
+          ResetMode.kResetSafeParameters,
+          PersistMode.kPersistParameters);
+    } catch (Throwable t) {
+      // REV library missing or initialization failed — keep intakeMotor null and continue.
+      intakeMotor = null;
+      System.err.println("IntakeSubsystem: SparkMax unavailable or failed to initialize: " + t.getMessage());
+    }
 
   
 
@@ -49,7 +56,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Set the intake motor power in the range of [-1, 1]. */
   private void setIntakePower(double power) {
-    intakeMotor.set(power);
+    if (intakeMotor != null) {
+      intakeMotor.set(power);
+    }
   }
 
   
@@ -86,7 +95,11 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Display subsystem values
-    SmartDashboard.putNumber("Intake | Intake | Applied Output", intakeMotor.getAppliedOutput());
+    double applied = 0.0;
+    if (intakeMotor != null) {
+      applied = intakeMotor.getAppliedOutput();
+    }
+    SmartDashboard.putNumber("Intake | Intake | Applied Output", applied);
     try {
       if (intakeAppliedEntry == null) {
         intakeAppliedEntry = Shuffleboard.getTab("Driver")
@@ -95,7 +108,7 @@ public class IntakeSubsystem extends SubsystemBase {
             .withSize(1, 1)
             .getEntry();
       }
-      intakeAppliedEntry.setDouble(intakeMotor.getAppliedOutput());
+      intakeAppliedEntry.setDouble(applied);
     } catch (Throwable ignored) {
     }
   }

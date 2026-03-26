@@ -47,6 +47,7 @@ public class RobotContainer {
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  @SuppressWarnings("removal")
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
